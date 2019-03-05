@@ -100,5 +100,28 @@ const url = 'http://www.chinau.cc/search/searchList.html?orderByIncrease=&orderB
 const baseUrl = 'http://www.chinesestamp.cn/'
 
 // download(url, handleBody);
+// download(baseUrl, saveHtml)
 
-download(baseUrl, saveHtml)
+const yearUrl = "http://www.chinesestamp.cn/y1992"
+
+const handleYearBody = body => {
+    $ = cheerio.load(body, { decodeEntities: false });
+    const sets = [];
+    $('.post_content tr').each((i, el) => {
+        const stampSet = {};
+        const $el = $(el);
+        stampSet.detailUrl = $el.find('a').attr('href');
+        stampSet.title = $el.find('a').text().trim();
+        stampSet.recordNum = $el.find('td:first-child').text().trim();
+
+        sets.push(stampSet);
+    })
+    console.log('========', sets);
+    //保存成本地 json 文件
+    var yearFilename = './data/y1992.json';
+    writeFile(yearFilename, JSON.stringify(sets, null, 4));
+}
+
+download(yearUrl, handleYearBody)
+
+
