@@ -74,6 +74,31 @@ const handleBody = body => {
     writeFile(outputFilename, JSON.stringify(list, null, 4));
 }
 
+const saveHtml = body => {
+    $ = cheerio.load(body, { decodeEntities: false });
+    
+    //保存成本地 html 文件
+    var outputFilename = './data/index.html';
+    writeFile(outputFilename, $.html());
+
+    const links = [];
+    $('a').each((i, el) => {
+        const link = {}
+        const $el = $(el);
+        link.label = $el.text();
+        link.url = $el.attr('href');
+        links.push(link);
+    })
+
+    //保存成本地 json 文件
+    var linksFilename = './data/links.json';
+    writeFile(linksFilename, JSON.stringify(links, null, 4));
+}
+
 const url = 'http://www.chinau.cc/search/searchList.html?orderByIncrease=&orderByReleaseDate=ASC&pageSize=900&currentPage=1&stampCategoryId=512'
 
-download(url, handleBody);
+const baseUrl = 'http://www.chinesestamp.cn/'
+
+// download(url, handleBody);
+
+download(baseUrl, saveHtml)
